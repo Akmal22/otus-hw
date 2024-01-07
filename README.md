@@ -1,1 +1,1 @@
-# otus-hw
+OTUS homeworks repository
