@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.0.0'
+}
+
+shadowJar {
+    manifest {
+        attributes 'Main-Class': 'ru.otus.HelloOtus'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:11.0.2'
+}

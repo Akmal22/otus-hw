@@ -1,1 +1,2 @@
 OTUS homeworks repository
+Student Rakhimbaev Akmal
