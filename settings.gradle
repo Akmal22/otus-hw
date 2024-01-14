@@ -1,3 +1,14 @@
 rootProject.name = "otus-hw"
 include 'hw01-gradle'
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            version('guava', '11.0.2')
+            version('shadowJar', '8.0.0')
+
+            library('guava', 'com.google.guava', 'guava').versionRef('guava')
+            plugin('shadowJar', 'com.github.johnrengelman.shadow').versionRef('shadowJar')
+        }
+    }
+}
