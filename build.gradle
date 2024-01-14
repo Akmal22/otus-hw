@@ -2,6 +2,9 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    group('ru.otus')
+    version('1.0-SNAPSHOT')
 }
 
 subprojects {
