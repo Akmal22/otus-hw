@@ -8,9 +8,7 @@ dependencyResolutionManagement {
             version('shadowJar', '8.0.0')
 
             library('guava', 'com.google.guava', 'guava').versionRef('guava')
-
             plugin('shadowJar', 'com.github.johnrengelman.shadow').versionRef('shadowJar')
-            plugin('java','java').version('')
         }
     }
 }
