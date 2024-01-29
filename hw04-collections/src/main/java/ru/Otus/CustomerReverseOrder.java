@@ -1,15 +1,16 @@
 package ru.Otus;
 
+import java.util.Deque;
 import java.util.LinkedList;
 
 public class CustomerReverseOrder {
-    private final LinkedList<Customer> collection = new LinkedList<>();
+    private final Deque<Customer> customersDeque = new LinkedList<>();
 
     public void add(Customer customer) {
-        collection.add(customer);
+        customersDeque.add(customer);
     }
 
     public Customer take() {
-        return collection.pollLast();
+        return customersDeque.pollLast();
     }
 }
