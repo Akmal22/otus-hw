@@ -1,17 +1,16 @@
 package ru.otus;
 
+import org.javatuples.Pair;
 import ru.otus.test.MyServiceTest;
 
-import java.util.Map;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Map<String, String> testResult = TestRunner.run(MyServiceTest.class);
+        List<Pair<String, String>> testsResult = TestRunner.run(MyServiceTest.class);
         System.out.println("Tests result:");
-        if (testResult != null) {
-            for (Map.Entry<String, String> entry : testResult.entrySet()) {
-                System.out.printf("%s: %s\n", entry.getKey(), entry.getValue());
-            }
+        if (testsResult != null) {
+            testsResult.forEach(testResult -> System.out.printf("%s: %s", testResult.getValue0(), testResult.getValue1()));
         } else {
             System.out.println("Test run error");
         }
