@@ -9,3 +9,5 @@ build
 
 #Ignore jenv
 .java-version
+
+*.log
