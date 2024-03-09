@@ -6,5 +6,6 @@ public class Main {
         testLogging.calculation(6);
         testLogging.calculation(6, 4);
         testLogging.calculation(4, 5, 6);
+        testLogging.calculation(7);
     }
 }

@@ -3,7 +3,8 @@ package ru.otus;
 import java.lang.reflect.Method;
 
 public class Utils {
-    public static Integer getMethodHashCode(Method method, int argsSize) {
-        return method.hashCode() + argsSize;
+    public static <T> boolean logMethod(Method method) {
+        return method.getDeclaredAnnotations().length > 0
+                && method.isAnnotationPresent(Log.class);
     }
 }

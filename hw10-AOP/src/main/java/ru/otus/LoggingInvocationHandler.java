@@ -5,13 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LoggingInvocationHandler implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(LoggingInvocationHandler.class);
 
-    private final Map<Integer, Method> loggingMethods = new HashMap<>();
+    private final Set<Method> loggingMethods = new HashSet<>();
 
     private final TestLoggingInterface proxiedObject;
 
@@ -21,10 +21,10 @@ public class LoggingInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (loggingMethods.containsKey(Utils.getMethodHashCode(method, args.length))) {
+        if (loggingMethods.contains(method)) {
             logger.info("executed method: {}, params: {}", method.getName(), args);
-        } else if (proxiedObject.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes()).isAnnotationPresent(Log.class)) {
-            loggingMethods.put(Utils.getMethodHashCode(method, args.length), method);
+        } else if (Utils.logMethod(proxiedObject.getClass().getMethod(method.getName(), method.getParameterTypes()))) {
+            loggingMethods.add(method);
             logger.info("executed method: {}, params: {}", method.getName(), args);
         }
 
