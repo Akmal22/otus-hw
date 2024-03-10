@@ -11,23 +11,27 @@ import java.util.Set;
 public class LoggingInvocationHandler implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(LoggingInvocationHandler.class);
 
-    private final Set<Method> loggingMethods = new HashSet<>();
+    private final Set<Method> loggingMethods;
 
     private final TestLoggingInterface proxiedObject;
 
     public LoggingInvocationHandler(TestLoggingInterface proxiedObject) {
         this.proxiedObject = proxiedObject;
+        this.loggingMethods = new HashSet<>();
+        for (Method method : proxiedObject.getClass().getMethods()) {
+            if (Utils.logMethod(method)) {
+                loggingMethods.add(method);
+            }
+        }
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (loggingMethods.contains(method)) {
-            logger.info("executed method: {}, params: {}", method.getName(), args);
-        } else if (Utils.logMethod(proxiedObject.getClass().getMethod(method.getName(), method.getParameterTypes()))) {
-            loggingMethods.add(method);
-            logger.info("executed method: {}, params: {}", method.getName(), args);
+    public Object invoke(Object proxy, Method interfaceMethod, Object[] args) throws Throwable {
+        Method objectMethod = proxiedObject.getClass().getMethod(interfaceMethod.getName(), interfaceMethod.getParameterTypes());
+        if (loggingMethods.contains(objectMethod)) {
+            logger.info("executed method: {}, params: {}", interfaceMethod.getName(), args);
         }
 
-        return method.invoke(proxiedObject, args);
+        return interfaceMethod.invoke(proxiedObject, args);
     }
 }
