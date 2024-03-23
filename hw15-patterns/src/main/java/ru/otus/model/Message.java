@@ -1,7 +1,9 @@
 package ru.otus.model;
 
+import java.util.ArrayList;
+
 @SuppressWarnings({"java:S107", "java:S1135"})
-public class Message {
+public class Message implements Cloneable {
     private final long id;
     private final String field1;
     private final String field2;
@@ -141,6 +143,31 @@ public class Message {
                 ", field12='" + field12 + '\'' +
                 ", field13=" + field13 +
                 '}';
+    }
+
+    @Override
+    public Message clone() {
+        ObjectForMessage objectForMessage = null;
+        if (this.field13 != null) {
+            objectForMessage = new ObjectForMessage();
+            if (this.field13.getData() != null) {
+                objectForMessage.setData(new ArrayList<>(this.field13.getData()));
+            }
+        }
+        return new Message(id,
+                field1,
+                field2,
+                field3,
+                field4,
+                field5,
+                field6,
+                field7,
+                field8,
+                field9,
+                field10,
+                field11,
+                field12,
+                objectForMessage);
     }
 
     public static class Builder {

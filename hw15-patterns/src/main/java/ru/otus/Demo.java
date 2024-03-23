@@ -8,13 +8,14 @@ import ru.otus.model.Message;
 import ru.otus.processor.ExceptionThrowProcessor;
 import ru.otus.processor.FieldSwapProcessor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Demo {
     private static final Logger logger = LoggerFactory.getLogger(Demo.class);
 
     public static void main(String[] args) {
-        var processors = List.of(new FieldSwapProcessor(), new ExceptionThrowProcessor());
+        var processors = List.of(new FieldSwapProcessor(), new ExceptionThrowProcessor(LocalDateTime::now));
 
         var complexProcessor = new ComplexProcessor(processors, ex -> {
         });
