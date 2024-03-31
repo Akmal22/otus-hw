@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.otus.Nominal._100;
+import static ru.otus.Nominal._50;
+import static ru.otus.Nominal._500;
 
 @DisplayName("Atm should ")
 public class AtmTest {
@@ -15,59 +18,59 @@ public class AtmTest {
     @Test
     void atmSuccessScenario() {
         // Given
-        Map<Ruble, Integer> initialMoney = new HashMap<>();
-        initialMoney.put(new Ruble(50.0), 10);
-        initialMoney.put(new Ruble(100.0), 10);
-        initialMoney.put(new Ruble(500.0), 10);
-        Atm<Ruble> atm = new RubleAtm(initialMoney);
+        Map<Nominal, Integer> initialMoney = new HashMap<>();
+        initialMoney.put(_50, 10);
+        initialMoney.put(_100, 10);
+        initialMoney.put(_500, 10);
+        Atm atm = new SimpleAtm(initialMoney);
 
         // When
-        Map<Ruble, Integer> cash = atm.giveOutAmount(650.0);
+        Map<Nominal, Integer> cash = atm.giveOutAmount(650);
 
         // Then
-        assertEquals(cash.get(new Ruble(50.0)), 1);
-        assertEquals(cash.get(new Ruble(100.0)), 1);
-        assertEquals(cash.get(new Ruble(500.0)), 1);
-        Map<Ruble, Integer> restCash = atm.giveOutRest();
-        assertEquals(restCash.get(new Ruble(50.0)), 9);
-        assertEquals(restCash.get(new Ruble(100.0)), 9);
-        assertEquals(restCash.get(new Ruble(500.0)), 9);
+        assertEquals(cash.get(_50), 1);
+        assertEquals(cash.get(_100), 1);
+        assertEquals(cash.get(_500), 1);
+        Map<Nominal, Integer> restCash = atm.giveOutRest();
+        assertEquals(restCash.get(_50), 9);
+        assertEquals(restCash.get(_100), 9);
+        assertEquals(restCash.get(_500), 9);
     }
 
     @Test
     @DisplayName("throw NotProcessableAmountException if there is not enough banknotes for specified amount")
     void atmNotProcessableAmountError() {
         // Given
-        Map<Ruble, Integer> initialMoney = new HashMap<>();
-        initialMoney.put(new Ruble(50.0), 10);
-        initialMoney.put(new Ruble(100.0), 10);
-        initialMoney.put(new Ruble(500.0), 10);
-        Atm<Ruble> atm = new RubleAtm(initialMoney);
+        Map<Nominal, Integer> initialMoney = new HashMap<>();
+        initialMoney.put(_50, 10);
+        initialMoney.put(_100, 10);
+        initialMoney.put(_500, 10);
+        Atm atm = new SimpleAtm(initialMoney);
 
         // When
-        assertThatThrownBy(() -> atm.giveOutAmount(575.0)).isInstanceOf(NotProcessableAmountException.class);
+        assertThatThrownBy(() -> atm.giveOutAmount(575)).isInstanceOf(NotProcessableAmountException.class);
 
 
         // Then
-        Map<Ruble, Integer> restMoney = atm.giveOutRest();
-        assertEquals(10, restMoney.get(new Ruble(50.0)));
-        assertEquals(10, restMoney.get(new Ruble(100.0)));
-        assertEquals(10, restMoney.get(new Ruble(500.0)));
+        Map<Nominal, Integer> restMoney = atm.giveOutRest();
+        assertEquals(10, restMoney.get(_50));
+        assertEquals(10, restMoney.get(_100));
+        assertEquals(10, restMoney.get(_500));
     }
 
     @Test
     @DisplayName("throw NotProcessableAmountException if there is not enough money for specified amount")
     void atmNotEnoughMoney() {
         // Given
-        Map<Ruble, Integer> initialMoney = new HashMap<>();
-        initialMoney.put(new Ruble(50.0), 10);
-        Atm<Ruble> atm = new RubleAtm(initialMoney);
+        Map<Nominal, Integer> initialMoney = new HashMap<>();
+        initialMoney.put(_50, 10);
+        Atm atm = new SimpleAtm(initialMoney);
 
         // When
-        assertThatThrownBy(() -> atm.giveOutAmount(600.0)).isInstanceOf(NotProcessableAmountException.class);
+        assertThatThrownBy(() -> atm.giveOutAmount(600)).isInstanceOf(NotProcessableAmountException.class);
 
         // Then
-        Map<Ruble, Integer> restMoney = atm.giveOutRest();
-        assertEquals(10, restMoney.get(new Ruble(50.0)));
+        Map<Nominal, Integer> restMoney = atm.giveOutRest();
+        assertEquals(10, restMoney.get(_50));
     }
 }

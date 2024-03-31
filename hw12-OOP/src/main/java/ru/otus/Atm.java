@@ -2,10 +2,10 @@ package ru.otus;
 
 import java.util.Map;
 
-public interface Atm<T extends BankNote> {
-    void insert(T bankNote);
+public interface Atm {
+    void insert(Nominal nominal);
 
-    Map<T, Integer> giveOutAmount(Double amount);
+    Map<Nominal, Integer> giveOutAmount(long amount);
 
-    Map<T, Integer> giveOutRest();
+    Map<Nominal, Integer> giveOutRest();
 }
