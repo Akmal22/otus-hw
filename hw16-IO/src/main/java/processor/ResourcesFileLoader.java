@@ -9,6 +9,7 @@ import ru.otus.model.Measurement;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class ResourcesFileLoader implements Loader {
@@ -16,8 +17,9 @@ public class ResourcesFileLoader implements Loader {
     private final File file;
     private final ObjectMapper reader;
 
-    public ResourcesFileLoader(String fileName) {
-        this.file = new File(fileName);
+    public ResourcesFileLoader(String fileName) throws URISyntaxException {
+        var uri = ClassLoader.getSystemResource(fileName).toURI();
+        this.file = new File(uri);
         this.reader = JsonMapper.builder().build();
     }
 
