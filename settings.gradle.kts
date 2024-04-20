@@ -8,6 +8,7 @@ include("hw10-AOP")
 include("hw12-OOP")
 include("hw15-patterns")
 include("hw16-IO")
+include("hw18-jdbc")
 
 pluginManagement {
     val jgitver: String by settings
