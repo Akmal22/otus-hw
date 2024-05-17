@@ -26,6 +26,10 @@ public class Phone {
     @Column(name = "number")
     private String number;
 
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
+
     public Phone(Long id, String number) {
         this.id = id;
         this.number = number;

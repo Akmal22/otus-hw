@@ -39,8 +39,7 @@ public class Client implements Cloneable {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_id", nullable = false, updatable = false)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "client")
     private List<Phone> phones = new ArrayList<>();
 
     public Client(String name) {
@@ -58,6 +57,7 @@ public class Client implements Cloneable {
         this.name = name;
         this.address = address;
         this.phones.addAll(phones);
+        phones.forEach(p -> p.setClient(this));
     }
 
     @Override
