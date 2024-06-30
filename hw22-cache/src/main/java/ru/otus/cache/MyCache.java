@@ -1,10 +1,14 @@
-package ru.otus;
+package ru.otus.cache;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
 public class MyCache<K, V> implements HwCache<K, V> {
+    private static final Logger log = LoggerFactory.getLogger(MyCache.class);
     private static final String PUT_ACTION = "put";
     private static final String GET_ACTION = "get";
     private static final String REMOVE_ACTION = "remove";
@@ -18,19 +22,19 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void put(K key, V value) {
-        listeners.forEach(l -> l.notify(key, value, PUT_ACTION));
+        applyListeners(key, PUT_ACTION);
         cache.put(key, value);
     }
 
     @Override
     public void remove(K key) {
-        listeners.forEach(l -> l.notify(key, null, REMOVE_ACTION));
+        applyListeners(key, REMOVE_ACTION);
         cache.remove(key);
     }
 
     @Override
     public V get(K key) {
-        listeners.forEach(l -> l.notify(key, null, GET_ACTION));
+        applyListeners(key, GET_ACTION);
         return cache.get(key);
     }
 
@@ -42,5 +46,13 @@ public class MyCache<K, V> implements HwCache<K, V> {
     @Override
     public void removeListener(HwListener<K, V> listener) {
         listeners.remove(listener);
+    }
+
+    private void applyListeners(K key, String action) {
+        try {
+            listeners.forEach(l -> l.notify(key, null, action));
+        } catch (Exception exc) {
+            log.warn("Error while applying listener", exc);
+        }
     }
 }
