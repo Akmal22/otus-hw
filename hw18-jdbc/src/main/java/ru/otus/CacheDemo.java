@@ -17,7 +17,7 @@ import ru.otus.sessionmanager.TransactionRunnerJdbc;
 
 import javax.sql.DataSource;
 
-public class Main {
+public class CacheDemo {
     private static final String URL = "jdbc:postgresql://localhost:5430/demoDB";
     private static final String USER = "usr";
     private static final String PASSWORD = "pwd";
@@ -36,6 +36,7 @@ public class Main {
         EntitySQLMetaData entitySQLMetaDataClient = new EntitySQLMetaDataImpl<>(entityClassMetaDataClient);
         var dataTemplateClient = new DataTemplateJdbc<>(dbExecutor, entitySQLMetaDataClient, entityClassMetaDataClient); // реализация DataTemplate, универсальная
 
+        // Код дальше должен остаться
         var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient);
         DbServiceClientWrapper dbServiceClientWrapper = new DbServiceClientWrapper(dbServiceClient);
 
@@ -48,27 +49,6 @@ public class Main {
         System.gc();
         Thread.sleep(1000);
         log.info("Cache size after GC: {}", dbServiceClientWrapper.getCacheSize());
-
-//        var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
-//        var clientSecondSelected = dbServiceClient
-//                .getClient(clientSecond.getId())
-//                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
-//        log.info("clientSecondSelected:{}", clientSecondSelected);
-//
-//        // Сделайте тоже самое с классом Manager (для него надо сделать свою таблицу)
-//
-//        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(Manager.class);
-//        EntitySQLMetaData entitySQLMetaDataManager = new EntitySQLMetaDataImpl<>(entityClassMetaDataManager);
-//        var dataTemplateManager = new DataTemplateJdbc<Manager>(dbExecutor, entitySQLMetaDataManager, entityClassMetaDataManager);
-//
-//        var dbServiceManager = new DbServiceManagerImpl(transactionRunner, dataTemplateManager);
-//        dbServiceManager.saveManager(new Manager("ManagerFirst"));
-//
-//        var managerSecond = dbServiceManager.saveManager(new Manager("ManagerSecond"));
-//        var managerSecondSelected = dbServiceManager
-//                .getManager(managerSecond.getNo())
-//                .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
-//        log.info("managerSecondSelected:{}", managerSecondSelected);
     }
 
     private static void flywayMigrations(DataSource dataSource) {

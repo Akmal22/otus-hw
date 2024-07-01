@@ -1,8 +1,8 @@
-package ru.otus.orm;
+package ru.otus.dao;
 
-import ru.otus.repository.DataTemplate;
-import ru.otus.repository.DataTemplateException;
-import ru.otus.repository.executor.DbExecutor;
+import ru.otus.dao.orm.EntityClassMetaData;
+import ru.otus.dao.orm.EntitySQLMetaData;
+import ru.otus.dao.orm.executor.DBExecutor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,17 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Сохратяет объект в базу, читает объект из базы
- */
-@SuppressWarnings("java:S1068")
-public class DataTemplateJdbc<T> implements DataTemplate<T> {
-
-    private final DbExecutor dbExecutor;
+public class JdbcDataTemplate<T> implements DataTemplate<T> {
+    private final DBExecutor dbExecutor;
     private final EntitySQLMetaData entitySQLMetaData;
     private final EntityClassMetaData<T> entityClassMetaData;
 
-    public DataTemplateJdbc(DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, EntityClassMetaData<T> entityClassMetaData) {
+
+    public JdbcDataTemplate(DBExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, EntityClassMetaData<T> entityClassMetaData) {
         this.dbExecutor = dbExecutor;
         this.entitySQLMetaData = entitySQLMetaData;
         this.entityClassMetaData = entityClassMetaData;
@@ -62,20 +58,36 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     }
 
     @Override
-    public long insert(Connection connection, T entity) {
-        return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(), entityClassMetaData.getFieldsWithoutId().stream()
-                .map(f -> getFieldValue(f, entity))
-                .collect(Collectors.toList()));
+    public void update(Connection connection, T t) {
+        List<Object> params = entityClassMetaData.getFieldsWithoutId().stream()
+                .map(f -> getFieldValue(f, t))
+                .collect(Collectors.toList());
+        params.add(getFieldValue(entityClassMetaData.getIdField(), t));
+
+        dbExecutor.executeStatement(connection, entitySQLMetaData.updateSql(), params);
     }
 
     @Override
-    public void update(Connection connection, T entity) {
-        List<Object> params = entityClassMetaData.getFieldsWithoutId().stream()
-                .map(f -> getFieldValue(f, entity))
-                .collect(Collectors.toList());
+    public long insert(Connection connection, T t) {
+        return dbExecutor.executeStatement(connection, entitySQLMetaData.insertSql(), entityClassMetaData.getFieldsWithoutId().stream()
+                .map(f -> getFieldValue(f, t))
+                .collect(Collectors.toList()));
+    }
 
-        params.add(getFieldValue(entityClassMetaData.getIdField(), entity));
-        dbExecutor.executeStatement(connection, entitySQLMetaData.getUpdateSql(), params);
+
+    private T getObjectFromResultSet(ResultSet resultSet) throws InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        T t = entityClassMetaData.getConstructor().newInstance();
+        entityClassMetaData.getAllFields().forEach(f -> {
+            try {
+                var fieldValue = resultSet.getObject(f.getName(), f.getType());
+                f.set(t, fieldValue);
+            } catch (Exception exc) {
+                throw new DataTemplateException(exc);
+            }
+        });
+
+        return null;
     }
 
     private Object getFieldValue(Field field, T entity) {
@@ -84,20 +96,5 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         } catch (IllegalArgumentException | IllegalAccessException exc) {
             throw new DataTemplateException(exc);
         }
-    }
-
-    private T getObjectFromResultSet(ResultSet rs) throws InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
-        T t = entityClassMetaData.getConstructor().newInstance();
-        entityClassMetaData.getAllFields().forEach(f -> {
-            try {
-                Object fieldValue = rs.getObject(f.getName(), f.getType());
-                f.set(t, fieldValue);
-            } catch (Exception exc) {
-                throw new DataTemplateException(exc);
-            }
-        });
-
-        return t;
     }
 }

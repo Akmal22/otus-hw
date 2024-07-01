@@ -9,6 +9,8 @@ include("hw12-OOP")
 include("hw15-patterns")
 include("hw16-IO")
 include("hw18-jdbc")
+include("hw21-jpql")
+include("hw22-cache")
 
 pluginManagement {
     val jgitver: String by settings
@@ -31,4 +33,3 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-include("hw21-jpql")

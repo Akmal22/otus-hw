@@ -21,7 +21,7 @@ public class DbExecutorImpl implements DbExecutor {
             pst.executeUpdate();
             try (var rs = pst.getGeneratedKeys()) {
                 rs.next();
-                return rs.getInt(1);
+                return rs.getLong(1);
             }
         } catch (SQLException ex) {
             throw new DataBaseOperationException("executeInsert error", ex);
